@@ -397,7 +397,7 @@ export default function App() {
 
             <div className="w-full h-full flex items-center justify-center">
 
-              <ResponsiveContainer width="95%" height="95%">
+              <ResponsiveContainer width="100%" height="95%">
 
                 <BarChart
                   data={chartData}
@@ -405,7 +405,7 @@ export default function App() {
                   margin={{
                     top: 20,
                     right: 30,
-                    left: 20,
+                    left: 0,
                     bottom: 10,
                   }}
                   barCategoryGap="18%"
