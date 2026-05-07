@@ -407,7 +407,7 @@ export default function App() {
                     left: 0,
                     bottom: 10,
                   }}
-                  barCategoryGap="25%"
+                  barCategoryGap="30%"
                 >
 
                   <CartesianGrid
@@ -445,18 +445,16 @@ export default function App() {
                     dataKey="budget"
                     fill="#22c55e"
                     radius={[4, 4, 0, 0]}
-                    barSize={38}
+                    barSize={46}
                   />
 
-                  {/* EXPENSE */}
-                  {chartData.some((item) => item.expense > 0) && (
-                    <Bar
-                      dataKey="expense"
-                      fill="#ef4444"
-                      radius={[4, 4, 0, 0]}
-                      barSize={38}
-                    />
-                  )}
+                  {/* EXPENSE OVERLAY */}
+                  <Bar
+                    dataKey="expense"
+                    fill="#ef4444"
+                    radius={[4, 4, 0, 0]}
+                    barSize={32}
+                  />
 
                 </BarChart>
 
