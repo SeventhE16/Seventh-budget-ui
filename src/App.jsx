@@ -404,7 +404,7 @@ export default function App() {
                   layout="horizontal"
                   margin={{
                     top: 20,
-                    right: 30,
+                    right: 0,
                     left: 0,
                     bottom: 10,
                   }}
