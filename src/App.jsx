@@ -428,7 +428,7 @@ export default function App() {
                     interval={0}
                     padding={{
                       left: 20,
-                      right: 0,
+                      right: 20,
                     }}
                   />
 
@@ -440,7 +440,7 @@ export default function App() {
                     }}
                     axisLine={false}
                     tickLine={false}
-                    width={60}
+                    width={30}
                   />
 
                   <Tooltip
