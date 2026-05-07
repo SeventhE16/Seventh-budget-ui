@@ -1,18 +1,28 @@
-import { useState, useMemo, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
+  ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 
-export default function App() {
-  const budget = 100000;
+const days = [
+  "senin",
+  "selasa",
+  "rabu",
+  "kamis",
+  "jumat",
+  "sabtu",
+  "minggu",
+];
 
-  const base = {
+export default function App() {
+  const [weeklyBudget, setWeeklyBudget] = useState(100000);
+
+  const [dailyBudget, setDailyBudget] = useState({
     senin: 12000,
     selasa: 14000,
     rabu: 22000,
@@ -20,11 +30,10 @@ export default function App() {
     jumat: 14000,
     sabtu: 12000,
     minggu: 12000,
-  };
+  });
 
-  const [extra, setExtra] = useState(() => {
-    const saved = localStorage.getItem("budget-extra");
-
+  const [expenses, setExpenses] = useState(() => {
+    const saved = localStorage.getItem("expenses");
     return saved
       ? JSON.parse(saved)
       : {
@@ -38,212 +47,324 @@ export default function App() {
         };
   });
 
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem("history");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   useEffect(() => {
-    localStorage.setItem("budget-extra", JSON.stringify(extra));
-  }, [extra]);
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+  }, [expenses]);
 
-  const computed = useMemo(() => {
-    let total = 0;
-    const expenses = {};
+  useEffect(() => {
+    localStorage.setItem("history", JSON.stringify(history));
+  }, [history]);
 
-    Object.keys(base).forEach((day) => {
-      const val = base[day] + extra[day];
-      expenses[day] = val;
-      total += val;
+  // TOTAL DAILY BUDGET
+  const totalDailyBudget = Object.values(dailyBudget).reduce(
+    (a, b) => a + b,
+    0
+  );
+
+  // REDISTRIBUTION
+  const adjustedBudget = useMemo(() => {
+    const updated = { ...dailyBudget };
+
+    let overspend = 0;
+
+    days.forEach((day) => {
+      if (expenses[day] > updated[day]) {
+        overspend += expenses[day] - updated[day];
+      }
     });
 
-    return {
-      expenses,
-      total,
-      sisa: budget - total,
-      percent: (total / budget) * 100,
-    };
-  }, [extra]);
+    const futureDays = days.filter(
+      (day) => expenses[day] <= updated[day]
+    );
 
-  const chartData = Object.keys(computed.expenses).map((day) => ({
+    if (futureDays.length > 0 && overspend > 0) {
+      const cut = Math.ceil(overspend / futureDays.length);
+
+      futureDays.forEach((day) => {
+        updated[day] = Math.max(updated[day] - cut, 0);
+      });
+    }
+
+    return updated;
+  }, [expenses, dailyBudget]);
+
+  const totalExpense = Object.values(expenses).reduce(
+    (a, b) => a + b,
+    0
+  );
+
+  const remaining = weeklyBudget - totalExpense;
+
+  const percent = (totalExpense / weeklyBudget) * 100;
+
+  const chartData = days.map((day) => ({
     name: day,
-    total: computed.expenses[day],
+    budget: adjustedBudget[day],
+    expense: expenses[day],
   }));
 
+  const monthlyTotal = history.reduce(
+    (sum, item) => sum + item.total,
+    0
+  );
+
+  function saveWeek() {
+    const newEntry = {
+      month: new Date().toLocaleString("id-ID", {
+        month: "long",
+      }),
+      total: totalExpense,
+      data: expenses,
+    };
+
+    setHistory([...history, newEntry]);
+
+    setExpenses({
+      senin: 0,
+      selasa: 0,
+      rabu: 0,
+      kamis: 0,
+      jumat: 0,
+      sabtu: 0,
+      minggu: 0,
+    });
+  }
+
   return (
-    <div className="min-h-screen bg-[#050816] text-green-300 flex items-center justify-center overflow-hidden relative font-mono p-4">
+    <div className="min-h-screen bg-[#050816] text-green-300 p-4 font-mono">
 
-      {/* Glow Background */}
-      <div className="absolute w-[500px] h-[500px] bg-green-500/10 blur-3xl rounded-full top-[-150px] left-[-150px]" />
-      <div className="absolute w-[400px] h-[400px] bg-lime-400/10 blur-3xl rounded-full bottom-[-100px] right-[-100px]" />
+      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-4">
 
-      {/* Main Card */}
-      <div
-        className="
-          relative z-10 w-full max-w-md
-          bg-black/70 backdrop-blur-md
-          p-6
-          border-4 border-green-400
-          shadow-[0_0_40px_rgba(34,197,94,0.35)]
-        "
-        style={{
-          clipPath:
-            "polygon(0px 8px, 8px 8px, 8px 0px, calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 0px) 100%, 8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px))",
-        }}
-      >
+        {/* LEFT */}
+        <div className="border-4 border-green-500 p-5 bg-black/70">
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5">
-          <div>
-            <h1 className="text-2xl tracking-widest text-green-400 drop-shadow-[0_0_8px_#22c55e]">
-              WEEKLY BUDGET INTERFACE
-            </h1>
+          <h1 className="text-2xl mb-5 text-green-400">
+            KINICH_SYS
+          </h1>
 
-            <p className="text-[11px] text-green-700">
-              Seventh_System
-            </p>
-          </div>
+          {/* WEEKLY */}
+          <div className="mb-5">
+            <p className="text-sm mb-2">WEEKLY BUDGET</p>
 
-          <div className="w-12 h-12 border border-green-500 flex items-center justify-center text-xl shadow-[0_0_12px_#22c55e]">
-            🌿
-          </div>
-        </div>
-
-        {/* Budget Info */}
-        <div className="space-y-2 text-sm border border-green-500/30 p-3 bg-green-950/10">
-
-          <div className="flex justify-between">
-            <span className="text-green-600">TOTAL</span>
-            <span>Rp{budget}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="text-green-600">USED</span>
-            <span>Rp{computed.total}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="text-green-600">LEFT</span>
-
-            <span className={computed.sisa < 0 ? "text-red-400" : ""}>
-              Rp{computed.sisa}
-            </span>
-          </div>
-        </div>
-
-        {/* Progress */}
-        <div className="mt-5">
-          <div className="flex justify-between text-[11px] mb-1 text-green-700">
-            <span>ENERGY</span>
-            <span>{Math.floor(computed.percent)}%</span>
-          </div>
-
-          <div className="w-full h-4 border border-green-500 bg-black overflow-hidden">
-            <div
-              className={`h-full transition-all duration-500 ${
-                computed.percent > 90
-                  ? "bg-red-500"
-                  : computed.percent > 70
-                  ? "bg-yellow-400"
-                  : "bg-green-400"
-              } shadow-[0_0_12px_currentColor]`}
-              style={{ width: `${computed.percent}%` }}
+            <input
+              type="number"
+              value={weeklyBudget}
+              onChange={(e) =>
+                setWeeklyBudget(Number(e.target.value))
+              }
+              className="w-full bg-black border border-green-500 px-3 py-2"
             />
           </div>
+
+          {/* DAILY */}
+          <div className="mb-5">
+            <p className="text-sm mb-3">DAILY BUDGET</p>
+
+            <div className="space-y-2">
+              {days.map((day) => (
+                <div
+                  key={day}
+                  className="flex justify-between items-center text-sm"
+                >
+                  <span className="uppercase w-20">
+                    {day}
+                  </span>
+
+                  <input
+                    type="number"
+                    value={dailyBudget[day]}
+                    onChange={(e) =>
+                      setDailyBudget({
+                        ...dailyBudget,
+                        [day]: Number(e.target.value),
+                      })
+                    }
+                    className="bg-black border border-green-500 px-2 py-1 w-24"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {totalDailyBudget > weeklyBudget && (
+              <p className="text-red-400 text-xs mt-2">
+                ⚠ TOTAL DAILY BUDGET EXCEEDS WEEKLY LIMIT
+              </p>
+            )}
+          </div>
+
+          {/* EXPENSE */}
+          <div className="mb-5">
+            <p className="text-sm mb-3">INPUT EXPENSE</p>
+
+            <div className="space-y-2">
+              {days.map((day) => (
+                <div
+                  key={day}
+                  className="flex justify-between items-center text-sm"
+                >
+                  <span className="uppercase w-20">
+                    {day}
+                  </span>
+
+                  <input
+                    type="number"
+                    value={expenses[day]}
+                    onChange={(e) =>
+                      setExpenses({
+                        ...expenses,
+                        [day]: Number(e.target.value),
+                      })
+                    }
+                    className="bg-black border border-green-500 px-2 py-1 w-24"
+                  />
+
+                  <span className="text-xs text-green-500 w-20 text-right">
+                    {adjustedBudget[day]}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* PROGRESS */}
+          <div className="mb-5">
+
+            <div className="flex justify-between text-xs mb-1">
+              <span>USED</span>
+              <span>{Math.floor(percent)}%</span>
+            </div>
+
+            <div className="w-full h-4 border border-green-500">
+              <div
+                className={`h-full ${
+                  percent > 90
+                    ? "bg-red-500"
+                    : percent > 70
+                    ? "bg-yellow-400"
+                    : "bg-green-400"
+                }`}
+                style={{
+                  width: `${percent}%`,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* SUMMARY */}
+          <div className="border border-green-500 p-3 text-sm space-y-1">
+
+            <div className="flex justify-between">
+              <span>TOTAL USED</span>
+              <span>Rp{totalExpense}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>REMAINING</span>
+              <span>Rp{remaining}</span>
+            </div>
+
+          </div>
+
+          <button
+            onClick={saveWeek}
+            className="mt-5 w-full border border-green-500 py-2 hover:bg-green-500 hover:text-black"
+          >
+            SAVE WEEK
+          </button>
+
         </div>
 
-        {/* Chart */}
-        <div className="mt-6 border border-green-500/30 p-3 bg-green-950/10">
-          <h3 className="text-xs text-green-500 mb-3 tracking-widest">
-            EXPENSE_GRAPH.exe
-          </h3>
+        {/* RIGHT */}
+        <div className="border-4 border-green-500 p-5 bg-black/70">
 
-          <div className="w-full h-44">
+          <h2 className="text-xl text-green-400 mb-5">
+            ANALYTICS
+          </h2>
+
+          {/* CHART */}
+          <div className="h-64 mb-6">
             <ResponsiveContainer>
               <BarChart data={chartData}>
                 <XAxis
                   dataKey="name"
                   stroke="#22c55e"
-                  tick={{ fontSize: 10 }}
                 />
 
-                <YAxis
-                  stroke="#22c55e"
-                  tick={{ fontSize: 10 }}
-                />
+                <YAxis stroke="#22c55e" />
 
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#020617",
-                    border: "1px solid #22c55e",
-                    color: "#22c55e",
-                  }}
+                <Tooltip />
+
+                <Bar
+                  dataKey="budget"
+                  fill="#22c55e"
                 />
 
                 <Bar
-                  dataKey="total"
-                  fill="#22c55e"
-                  radius={[0, 0, 0, 0]}
+                  dataKey="expense"
+                  fill="#ef4444"
                 />
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
 
-        {/* Input */}
-        <div className="mt-6">
-          <h3 className="text-xs tracking-widest text-green-500 mb-3">
-            INPUT_PANEL
-          </h3>
+          {/* HISTORY */}
+          <div>
 
-          <div className="space-y-2">
-            {Object.keys(extra).map((day) => (
-              <div
-                key={day}
-                className="flex items-center justify-between border border-green-500/20 px-2 py-2 bg-black/40 text-xs"
-              >
+            <h3 className="text-sm mb-3">
+              MONTHLY HISTORY
+            </h3>
 
-                <span className="uppercase w-16 text-green-400">
-                  {day}
-                </span>
+            <div className="space-y-3 max-h-[400px] overflow-auto">
 
-                <input
-                  type="number"
-                  value={extra[day]}
-                  onChange={(e) =>
-                    setExtra({
-                      ...extra,
-                      [day]: Number(e.target.value),
-                    })
-                  }
-                  className="bg-black border border-green-500 text-green-300 px-2 py-1 w-20 text-right outline-none focus:shadow-[0_0_8px_#22c55e]"
-                />
+              {history.map((item, index) => (
+                <div
+                  key={index}
+                  className="border border-green-500 p-3 text-sm"
+                >
 
-                <span className="w-24 text-right text-green-600">
-                  Rp{computed.expenses[day]}
-                </span>
+                  <div className="flex justify-between mb-2">
+                    <span>
+                      {item.month.toUpperCase()}
+                    </span>
+
+                    <span>
+                      Rp{item.total}
+                    </span>
+                  </div>
+
+                  {days.map((day) => (
+                    <div
+                      key={day}
+                      className="flex justify-between text-xs text-green-500"
+                    >
+                      <span>{day}</span>
+                      <span>
+                        Rp{item.data[day]}
+                      </span>
+                    </div>
+                  ))}
+
+                </div>
+              ))}
+
+            </div>
+
+            <div className="mt-5 border border-green-500 p-3">
+
+              <div className="flex justify-between text-sm">
+                <span>MONTH TOTAL</span>
+                <span>Rp{monthlyTotal}</span>
               </div>
-            ))}
+
+            </div>
+
           </div>
-        </div>
 
-        {/* Warning */}
-        {computed.sisa < 0 && (
-          <div className="mt-4 border border-red-500 bg-red-950/20 p-2 text-red-400 text-xs animate-pulse">
-            ⚠ OVER BUDGET DETECTED
-          </div>
-        )}
-
-        {/* Button */}
-        <button
-          onClick={() => {
-            localStorage.removeItem("budget-extra");
-            window.location.reload();
-          }}
-          className="mt-5 w-full border border-green-500 py-2 text-sm tracking-widest hover:bg-green-500 hover:text-black transition-all duration-300 shadow-[0_0_12px_#22c55e]"
-        >
-          RESET_SYSTEM
-        </button>
-
-        {/* Footer */}
-        <div className="mt-4 flex justify-between text-[10px] text-green-800">
-          <span>SeventhE16</span>
-          <span>Farel Assadida</span>
         </div>
 
       </div>
