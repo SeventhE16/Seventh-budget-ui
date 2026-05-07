@@ -428,7 +428,7 @@ export default function App() {
                     interval={0}
                     padding={{
                       left: 20,
-                      right: 20,
+                      right: 0,
                     }}
                   />
 
