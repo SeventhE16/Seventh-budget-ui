@@ -404,7 +404,7 @@ export default function App() {
                   margin={{
                     top: 20,
                     right: 20,
-                    left: 0,
+                    left: 20,
                     bottom: 10,
                   }}
                   barCategoryGap="30%"
