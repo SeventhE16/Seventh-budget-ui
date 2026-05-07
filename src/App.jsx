@@ -393,72 +393,87 @@ export default function App() {
           </div>
 
           {/* CHART */}
-          <div className="h-[350px] border border-cyan-500 bg-black p-3 mb-8">
+          <div className="h-[350px] border border-cyan-500 bg-black p-6 mb-8 flex items-center justify-center">
 
-            <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full h-full flex items-center justify-center">
 
-              <BarChart
-                data={chartData}
-                margin={{
-                  top: 20,
-                  right: 10,
-                  left: -15,
-                  bottom: 10,
-                }}
-                barCategoryGap="18%"
-              >
+              <ResponsiveContainer width="95%" height="95%">
 
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="#083344"
-                />
-
-                <XAxis
-                  dataKey="name"
-                  stroke="#67e8f9"
-                  tick={{
-                    fontSize: 13,
-                    fill: "#67e8f9",
+                <BarChart
+                  data={chartData}
+                  layout="horizontal"
+                  margin={{
+                    top: 20,
+                    right: 30,
+                    left: 20,
+                    bottom: 10,
                   }}
-                  axisLine={false}
-                  tickLine={false}
-                />
+                  barCategoryGap="18%"
+                >
 
-                <YAxis
-                  stroke="#67e8f9"
-                  tick={{
-                    fontSize: 11,
-                    fill: "#67e8f9",
-                  }}
-                  axisLine={false}
-                  tickLine={false}
-                />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#083344"
+                  />
 
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#020617",
-                    border: "1px solid #22d3ee",
-                    color: "#67e8f9",
-                  }}
-                />
+                  <XAxis
+                    dataKey="name"
+                    stroke="#67e8f9"
+                    tick={{
+                      fontSize: 13,
+                      fill: "#67e8f9",
+                    }}
+                    axisLine={false}
+                    tickLine={false}
+                    interval={0}
+                    padding={{
+                      left: 20,
+                      right: 20,
+                    }}
+                  />
 
-                <Bar
-                  dataKey="budget"
-                  fill="#22c55e"
-                  radius={[4, 4, 0, 0]}
-                  barSize={30}
-                />
+                  <YAxis
+                    stroke="#67e8f9"
+                    tick={{
+                      fontSize: 11,
+                      fill: "#67e8f9",
+                    }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={60}
+                  />
 
-                <Bar
-                  dataKey="expense"
-                  fill="#ef4444"
-                  radius={[4, 4, 0, 0]}
-                  barSize={30}
-                />
+                  <Tooltip
+                    cursor={{
+                      fill: "rgba(255,255,255,0.08)",
+                    }}
+                    contentStyle={{
+                      backgroundColor: "#020617",
+                      border: "2px solid #22d3ee",
+                      color: "#67e8f9",
+                      fontFamily: "monospace",
+                    }}
+                  />
 
-              </BarChart>
+                  <Bar
+                    dataKey="budget"
+                    fill="#22c55e"
+                    radius={[4, 4, 0, 0]}
+                    barSize={30}
+                  />
 
-            </ResponsiveContainer>
+                  <Bar
+                    dataKey="expense"
+                    fill="#ef4444"
+                    radius={[4, 4, 0, 0]}
+                    barSize={30}
+                  />
+
+                </BarChart>
+
+              </ResponsiveContainer>
+
+            </div>
 
           </div>
 
