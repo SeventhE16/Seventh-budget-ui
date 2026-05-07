@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
 } from "recharts";
 
 const days = [
@@ -34,6 +35,7 @@ export default function App() {
 
   const [expenses, setExpenses] = useState(() => {
     const saved = localStorage.getItem("expenses");
+
     return saved
       ? JSON.parse(saved)
       : {
@@ -60,13 +62,11 @@ export default function App() {
     localStorage.setItem("history", JSON.stringify(history));
   }, [history]);
 
-  // TOTAL DAILY BUDGET
   const totalDailyBudget = Object.values(dailyBudget).reduce(
     (a, b) => a + b,
     0
   );
 
-  // REDISTRIBUTION
   const adjustedBudget = useMemo(() => {
     const updated = { ...dailyBudget };
 
@@ -136,20 +136,56 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050816] text-green-300 p-4 font-mono">
+    <div className="min-h-screen bg-[#050816] text-white font-mono overflow-hidden relative">
 
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-4">
+      {/* PIXEL BACKGROUND */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[linear-gradient(to_right,#22c55e_1px,transparent_1px),linear-gradient(to_bottom,#22c55e_1px,transparent_1px)] bg-[size:32px_32px]" />
 
-        {/* LEFT */}
-        <div className="border-4 border-green-500 p-5 bg-black/70">
+      {/* GLOW */}
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-green-500/10 blur-3xl rounded-full" />
 
-          <h1 className="text-2xl mb-5 text-green-400">
-            KINICH_SYS
-          </h1>
+      <div className="relative z-10 max-w-7xl mx-auto p-6 grid lg:grid-cols-2 gap-6">
 
-          {/* WEEKLY */}
-          <div className="mb-5">
-            <p className="text-sm mb-2">WEEKLY BUDGET</p>
+        {/* LEFT PANEL */}
+        <div
+          className="bg-[#071018] border-4 border-green-400 p-6 shadow-[0_0_30px_rgba(34,197,94,0.25)]"
+          style={{
+            clipPath:
+              "polygon(0px 8px, 8px 8px, 8px 0px, calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 0px) 100%, 8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px))",
+          }}
+        >
+
+          {/* HEADER */}
+          <div className="flex justify-between items-center mb-8">
+
+            <div>
+              <h1 className="text-4xl text-green-400 tracking-widest drop-shadow-[0_0_10px_#22c55e]">
+                KINICH_SYS
+              </h1>
+
+              <p className="text-xs text-green-700 mt-1">
+                NATLAN BUDGET TERMINAL
+              </p>
+            </div>
+
+            <div className="border-2 border-green-400 w-14 h-14 flex items-center justify-center text-2xl bg-black">
+              🌿
+            </div>
+
+          </div>
+
+          {/* WEEKLY BUDGET */}
+          <div className="mb-8">
+
+            <div className="mb-3">
+              <h2 className="text-xl text-green-300 tracking-widest">
+                WEEKLY BUDGET
+              </h2>
+
+              <p className="text-[11px] text-green-700">
+                Main weekly allocation
+              </p>
+            </div>
 
             <input
               type="number"
@@ -157,21 +193,35 @@ export default function App() {
               onChange={(e) =>
                 setWeeklyBudget(Number(e.target.value))
               }
-              className="w-full bg-black border border-green-500 px-3 py-2"
+              className="w-full bg-black border-2 border-cyan-400 px-4 py-3 text-cyan-300 text-lg outline-none focus:shadow-[0_0_12px_#22d3ee]"
             />
+
           </div>
 
-          {/* DAILY */}
-          <div className="mb-5">
-            <p className="text-sm mb-3">DAILY BUDGET</p>
+          {/* DAILY BUDGET */}
+          <div className="mb-8">
 
-            <div className="space-y-2">
+            <div className="mb-5 border-l-4 border-yellow-400 pl-3">
+
+              <h2 className="text-2xl text-yellow-300 tracking-widest">
+                DAILY BUDGET
+              </h2>
+
+              <p className="text-[11px] text-yellow-700">
+                Configure each day allocation
+              </p>
+
+            </div>
+
+            <div className="space-y-3">
+
               {days.map((day) => (
                 <div
                   key={day}
-                  className="flex justify-between items-center text-sm"
+                  className="flex items-center justify-between bg-black border border-yellow-500/30 px-3 py-2"
                 >
-                  <span className="uppercase w-20">
+
+                  <span className="uppercase text-yellow-300 w-20">
                     {day}
                   </span>
 
@@ -184,30 +234,46 @@ export default function App() {
                         [day]: Number(e.target.value),
                       })
                     }
-                    className="bg-black border border-green-500 px-2 py-1 w-24"
+                    className="bg-[#0f172a] border border-yellow-400 text-yellow-300 px-2 py-1 w-28 outline-none"
                   />
+
                 </div>
               ))}
+
             </div>
 
             {totalDailyBudget > weeklyBudget && (
-              <p className="text-red-400 text-xs mt-2">
-                ⚠ TOTAL DAILY BUDGET EXCEEDS WEEKLY LIMIT
-              </p>
+              <div className="mt-4 border border-red-500 bg-red-950/20 p-3 text-red-400 text-sm animate-pulse">
+                ⚠ DAILY LIMIT EXCEEDS WEEKLY BUDGET
+              </div>
             )}
+
           </div>
 
-          {/* EXPENSE */}
-          <div className="mb-5">
-            <p className="text-sm mb-3">INPUT EXPENSE</p>
+          {/* INPUT EXPENSE */}
+          <div className="mb-8">
 
-            <div className="space-y-2">
+            <div className="mb-5 border-l-4 border-red-400 pl-3">
+
+              <h2 className="text-2xl text-red-300 tracking-widest">
+                INPUT EXPENSE
+              </h2>
+
+              <p className="text-[11px] text-red-700">
+                Real spending tracker
+              </p>
+
+            </div>
+
+            <div className="space-y-3">
+
               {days.map((day) => (
                 <div
                   key={day}
-                  className="flex justify-between items-center text-sm"
+                  className="flex items-center justify-between bg-black border border-red-500/30 px-3 py-2"
                 >
-                  <span className="uppercase w-20">
+
+                  <span className="uppercase text-red-300 w-20">
                     {day}
                   </span>
 
@@ -220,28 +286,37 @@ export default function App() {
                         [day]: Number(e.target.value),
                       })
                     }
-                    className="bg-black border border-green-500 px-2 py-1 w-24"
+                    className="bg-[#0f172a] border border-red-400 text-red-300 px-2 py-1 w-28 outline-none"
                   />
 
-                  <span className="text-xs text-green-500 w-20 text-right">
+                  <span className="text-xs text-green-400 w-20 text-right">
                     {adjustedBudget[day]}
                   </span>
+
                 </div>
               ))}
+
             </div>
+
           </div>
 
           {/* PROGRESS */}
-          <div className="mb-5">
+          <div className="mb-6">
 
-            <div className="flex justify-between text-xs mb-1">
-              <span>USED</span>
-              <span>{Math.floor(percent)}%</span>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-cyan-300">
+                SYSTEM ENERGY
+              </span>
+
+              <span>
+                {Math.floor(percent)}%
+              </span>
             </div>
 
-            <div className="w-full h-4 border border-green-500">
+            <div className="w-full h-5 border-2 border-cyan-400 bg-black overflow-hidden">
+
               <div
-                className={`h-full ${
+                className={`h-full transition-all duration-500 ${
                   percent > 90
                     ? "bg-red-500"
                     : percent > 70
@@ -252,138 +327,217 @@ export default function App() {
                   width: `${percent}%`,
                 }}
               />
+
             </div>
+
           </div>
 
           {/* SUMMARY */}
-          <div className="border border-green-500 p-3 text-sm space-y-1">
+          <div className="grid grid-cols-2 gap-4">
 
-            <div className="flex justify-between">
-              <span>TOTAL USED</span>
-              <span>Rp{totalExpense}</span>
+            <div className="border border-green-500 p-4 bg-black">
+
+              <p className="text-xs text-green-700 mb-1">
+                TOTAL USED
+              </p>
+
+              <h2 className="text-2xl text-green-400">
+                Rp{totalExpense}
+              </h2>
+
             </div>
 
-            <div className="flex justify-between">
-              <span>REMAINING</span>
-              <span>Rp{remaining}</span>
+            <div className="border border-cyan-500 p-4 bg-black">
+
+              <p className="text-xs text-cyan-700 mb-1">
+                REMAINING
+              </p>
+
+              <h2 className="text-2xl text-cyan-300">
+                Rp{remaining}
+              </h2>
+
             </div>
 
           </div>
 
+          {/* SAVE */}
           <button
             onClick={saveWeek}
-            className="mt-5 w-full border border-green-500 py-2 hover:bg-green-500 hover:text-black"
+            className="mt-6 w-full py-3 border-2 border-green-400 text-green-300 hover:bg-green-400 hover:text-black transition-all duration-300 tracking-widest"
           >
-            SAVE WEEK
+            SAVE WEEK DATA
           </button>
 
         </div>
 
-        {/* RIGHT */}
-        <div className="border-4 border-green-500 p-5 bg-black/70">
+        {/* RIGHT PANEL */}
+        <div
+          className="bg-[#071018] border-4 border-cyan-400 p-6 shadow-[0_0_30px_rgba(34,211,238,0.25)]"
+          style={{
+            clipPath:
+              "polygon(0px 8px, 8px 8px, 8px 0px, calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 0px) 100%, 8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px))",
+          }}
+        >
 
-          <h2 className="text-xl text-green-400 mb-5">
-            ANALYTICS
-          </h2>
+          <div className="mb-6">
+
+            <h2 className="text-3xl text-cyan-300 tracking-widest">
+              ANALYTICS
+            </h2>
+
+            <p className="text-xs text-cyan-700 mt-1">
+              Spending analysis terminal
+            </p>
+
+          </div>
 
           {/* CHART */}
-          <div className="h-64 mb-6">
-            <ResponsiveContainer>
+          <div className="h-[350px] border border-cyan-500 bg-black p-3 mb-8">
+
+            <ResponsiveContainer width="100%" height="100%">
+
               <BarChart
                 data={chartData}
                 margin={{
-                  top: 10,
+                  top: 20,
                   right: 10,
-                  left: -20,
-                  bottom: 0,
+                  left: -15,
+                  bottom: 10,
                 }}
-                barCategoryGap="20%"
+                barCategoryGap="18%"
               >
+
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#083344"
+                />
+
                 <XAxis
                   dataKey="name"
-                  stroke="#22c55e"
+                  stroke="#67e8f9"
                   tick={{
-                    fontSize: 12,
+                    fontSize: 13,
+                    fill: "#67e8f9",
                   }}
                   axisLine={false}
                   tickLine={false}
                 />
 
                 <YAxis
-                  stroke="#22c55e"
+                  stroke="#67e8f9"
                   tick={{
                     fontSize: 11,
+                    fill: "#67e8f9",
                   }}
                   axisLine={false}
                   tickLine={false}
                 />
 
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#020617",
+                    border: "1px solid #22d3ee",
+                    color: "#67e8f9",
+                  }}
+                />
 
                 <Bar
                   dataKey="budget"
                   fill="#22c55e"
                   radius={[4, 4, 0, 0]}
-                  barSize={28}
+                  barSize={30}
                 />
 
                 <Bar
                   dataKey="expense"
                   fill="#ef4444"
                   radius={[4, 4, 0, 0]}
-                  barSize={28}
+                  barSize={30}
                 />
+
               </BarChart>
+
             </ResponsiveContainer>
+
           </div>
 
           {/* HISTORY */}
           <div>
 
-            <h3 className="text-sm mb-3">
-              MONTHLY HISTORY
-            </h3>
+            <div className="mb-5 border-l-4 border-cyan-400 pl-3">
 
-            <div className="space-y-3 max-h-[400px] overflow-auto">
+              <h2 className="text-2xl text-cyan-300 tracking-widest">
+                MONTHLY HISTORY
+              </h2>
+
+              <p className="text-[11px] text-cyan-700">
+                Weekly spending archive
+              </p>
+
+            </div>
+
+            <div className="space-y-4 max-h-[420px] overflow-auto pr-2">
 
               {history.map((item, index) => (
                 <div
                   key={index}
-                  className="border border-green-500 p-3 text-sm"
+                  className="border border-cyan-500 bg-black p-4"
                 >
 
-                  <div className="flex justify-between mb-2">
-                    <span>
+                  <div className="flex justify-between items-center mb-4">
+
+                    <span className="text-cyan-300 text-lg tracking-widest">
                       {item.month.toUpperCase()}
                     </span>
 
-                    <span>
+                    <span className="text-green-400">
                       Rp{item.total}
                     </span>
+
                   </div>
 
-                  {days.map((day) => (
-                    <div
-                      key={day}
-                      className="flex justify-between text-xs text-green-500"
-                    >
-                      <span>{day}</span>
-                      <span>
-                        Rp{item.data[day]}
-                      </span>
-                    </div>
-                  ))}
+                  <div className="grid grid-cols-2 gap-2">
+
+                    {days.map((day) => (
+                      <div
+                        key={day}
+                        className="flex justify-between text-xs border border-cyan-900 px-2 py-1"
+                      >
+
+                        <span className="text-cyan-700">
+                          {day}
+                        </span>
+
+                        <span className="text-cyan-300">
+                          Rp{item.data[day]}
+                        </span>
+
+                      </div>
+                    ))}
+
+                  </div>
 
                 </div>
               ))}
 
             </div>
 
-            <div className="mt-5 border border-green-500 p-3">
+            {/* TOTAL */}
+            <div className="mt-6 border-2 border-green-500 bg-black p-4 flex justify-between items-center">
 
-              <div className="flex justify-between text-sm">
-                <span>MONTH TOTAL</span>
-                <span>Rp{monthlyTotal}</span>
+              <div>
+                <p className="text-xs text-green-700">
+                  MONTH TOTAL
+                </p>
+
+                <h2 className="text-2xl text-green-400">
+                  Rp{monthlyTotal}
+                </h2>
+              </div>
+
+              <div className="text-3xl">
+                📊
               </div>
 
             </div>
