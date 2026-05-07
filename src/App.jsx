@@ -407,7 +407,7 @@ export default function App() {
                     left: 20,
                     bottom: 10,
                   }}
-                  barCategoryGap="30%"
+                  barCategoryGap="50%"
                 >
 
                   <CartesianGrid
