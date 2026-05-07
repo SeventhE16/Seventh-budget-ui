@@ -404,8 +404,8 @@ export default function App() {
                   layout="horizontal"
                   margin={{
                     top: 20,
-                    right: 0,
-                    left: 20,
+                    right: 20,
+                    left: 0,
                     bottom: 10,
                   }}
                   barCategoryGap="18%"
