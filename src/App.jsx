@@ -160,11 +160,11 @@ export default function App() {
 
             <div>
               <h1 className="text-4xl text-green-400 tracking-widest drop-shadow-[0_0_10px_#22c55e]">
-                KINICH_SYS
+                BUDGET APP
               </h1>
 
               <p className="text-xs text-green-700 mt-1">
-                NATLAN BUDGET TERMINAL
+                Seventh_System
               </p>
             </div>
 
@@ -183,7 +183,7 @@ export default function App() {
               </h2>
 
               <p className="text-[11px] text-green-700">
-                Main weekly allocation
+                Atur batas pengeluaran mingguan
               </p>
             </div>
 
@@ -208,7 +208,7 @@ export default function App() {
               </h2>
 
               <p className="text-[11px] text-yellow-700">
-                Configure each day allocation
+                Konfigurasi alokasi setiap hari
               </p>
 
             </div>
@@ -244,7 +244,7 @@ export default function App() {
 
             {totalDailyBudget > weeklyBudget && (
               <div className="mt-4 border border-red-500 bg-red-950/20 p-3 text-red-400 text-sm animate-pulse">
-                ⚠ DAILY LIMIT EXCEEDS WEEKLY BUDGET
+                ⚠ BATAS HARIAN MELEBIHI BUDGET MINGGUAN
               </div>
             )}
 
@@ -256,11 +256,11 @@ export default function App() {
             <div className="mb-5 border-l-4 border-red-400 pl-3">
 
               <h2 className="text-2xl text-red-300 tracking-widest">
-                INPUT EXPENSE
+                INPUT PENGELUARAN
               </h2>
 
               <p className="text-[11px] text-red-700">
-                Real spending tracker
+                Pelacak pengeluaran harian
               </p>
 
             </div>
@@ -305,7 +305,7 @@ export default function App() {
 
             <div className="flex justify-between text-sm mb-2">
               <span className="text-cyan-300">
-                SYSTEM ENERGY
+                PROGRES
               </span>
 
               <span>
@@ -338,7 +338,7 @@ export default function App() {
             <div className="border border-green-500 p-4 bg-black">
 
               <p className="text-xs text-green-700 mb-1">
-                TOTAL USED
+                TOTAL TERPAKAI
               </p>
 
               <h2 className="text-2xl text-green-400">
@@ -350,7 +350,7 @@ export default function App() {
             <div className="border border-cyan-500 p-4 bg-black">
 
               <p className="text-xs text-cyan-700 mb-1">
-                REMAINING
+                SISA
               </p>
 
               <h2 className="text-2xl text-cyan-300">
@@ -366,7 +366,7 @@ export default function App() {
             onClick={saveWeek}
             className="mt-6 w-full py-3 border-2 border-green-400 text-green-300 hover:bg-green-400 hover:text-black transition-all duration-300 tracking-widest"
           >
-            SAVE WEEK DATA
+            SIMPAN DATA MINGGUAN
           </button>
 
         </div>
@@ -383,11 +383,11 @@ export default function App() {
           <div className="mb-6">
 
             <h2 className="text-3xl text-cyan-300 tracking-widest">
-              ANALYTICS
+              ANALISIS PENGELUARAN
             </h2>
 
             <p className="text-xs text-cyan-700 mt-1">
-              Spending analysis terminal
+              GRAFIK PENGELUARAN
             </p>
 
           </div>
@@ -472,11 +472,11 @@ export default function App() {
             <div className="mb-5 border-l-4 border-cyan-400 pl-3">
 
               <h2 className="text-2xl text-cyan-300 tracking-widest">
-                MONTHLY HISTORY
+                HISTORI PERBULAN
               </h2>
 
               <p className="text-[11px] text-cyan-700">
-                Weekly spending archive
+                Rekap pengeluaran bulanan
               </p>
 
             </div>
@@ -532,16 +532,12 @@ export default function App() {
 
               <div>
                 <p className="text-xs text-green-700">
-                  MONTH TOTAL
+                  TOTAL SEBULAN
                 </p>
 
                 <h2 className="text-2xl text-green-400">
                   Rp{monthlyTotal}
                 </h2>
-              </div>
-
-              <div className="text-3xl">
-                📊
               </div>
 
             </div>
