@@ -397,18 +397,17 @@ export default function App() {
 
             <div className="w-full h-full flex items-center justify-center">
 
-              <ResponsiveContainer width="100%" height="95%">
+              <ResponsiveContainer width="100%" height="100%">
 
                 <BarChart
                   data={chartData}
-                  layout="horizontal"
                   margin={{
                     top: 20,
                     right: 20,
                     left: 0,
                     bottom: 10,
                   }}
-                  barCategoryGap="18%"
+                  barCategoryGap="25%"
                 >
 
                   <CartesianGrid
@@ -425,23 +424,9 @@ export default function App() {
                     }}
                     axisLine={false}
                     tickLine={false}
-                    interval={0}
-                    padding={{
-                      left: 20,
-                      right: 20,
-                    }}
                   />
 
-                  <YAxis
-                    stroke="#67e8f9"
-                    tick={{
-                      fontSize: 11,
-                      fill: "#67e8f9",
-                    }}
-                    axisLine={false}
-                    tickLine={false}
-                    width={30}
-                  />
+                  <YAxis hide />
 
                   <Tooltip
                     cursor={{
@@ -455,19 +440,23 @@ export default function App() {
                     }}
                   />
 
+                  {/* BUDGET */}
                   <Bar
                     dataKey="budget"
                     fill="#22c55e"
                     radius={[4, 4, 0, 0]}
-                    barSize={30}
+                    barSize={38}
                   />
 
-                  <Bar
-                    dataKey="expense"
-                    fill="#ef4444"
-                    radius={[4, 4, 0, 0]}
-                    barSize={30}
-                  />
+                  {/* EXPENSE */}
+                  {chartData.some((item) => item.expense > 0) && (
+                    <Bar
+                      dataKey="expense"
+                      fill="#ef4444"
+                      radius={[4, 4, 0, 0]}
+                      barSize={38}
+                    />
+                  )}
 
                 </BarChart>
 
