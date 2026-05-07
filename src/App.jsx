@@ -445,7 +445,7 @@ export default function App() {
                     dataKey="budget"
                     fill="#22c55e"
                     radius={[4, 4, 0, 0]}
-                    barSize={46}
+                    barSize={30}
                   />
 
                   {/* EXPENSE OVERLAY */}
@@ -453,7 +453,7 @@ export default function App() {
                     dataKey="expense"
                     fill="#ef4444"
                     radius={[4, 4, 0, 0]}
-                    barSize={32}
+                    barSize={30}
                   />
 
                 </BarChart>
