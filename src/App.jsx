@@ -289,24 +289,49 @@ export default function App() {
           {/* CHART */}
           <div className="h-64 mb-6">
             <ResponsiveContainer>
-              <BarChart data={chartData}>
+              <BarChart
+                data={chartData}
+                margin={{
+                  top: 10,
+                  right: 10,
+                  left: -20,
+                  bottom: 0,
+                }}
+                barCategoryGap="20%"
+              >
                 <XAxis
                   dataKey="name"
                   stroke="#22c55e"
+                  tick={{
+                    fontSize: 12,
+                  }}
+                  axisLine={false}
+                  tickLine={false}
                 />
 
-                <YAxis stroke="#22c55e" />
+                <YAxis
+                  stroke="#22c55e"
+                  tick={{
+                    fontSize: 11,
+                  }}
+                  axisLine={false}
+                  tickLine={false}
+                />
 
                 <Tooltip />
 
                 <Bar
                   dataKey="budget"
                   fill="#22c55e"
+                  radius={[4, 4, 0, 0]}
+                  barSize={28}
                 />
 
                 <Bar
                   dataKey="expense"
                   fill="#ef4444"
+                  radius={[4, 4, 0, 0]}
+                  barSize={28}
                 />
               </BarChart>
             </ResponsiveContainer>
